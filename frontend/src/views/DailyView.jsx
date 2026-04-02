@@ -19,10 +19,11 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
   return (
     <div className="space-y-8">
       {/* Header with Date */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground">
+      <div className="mb-2">
+        <h2 className="text-4xl font-bold text-foreground mb-2">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
         </h2>
+        <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-sm font-medium">Make it a great day 🎯</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -33,11 +34,11 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
 
           {/* Daily Schedule */}
           <div>
-            <h3 className="text-xl font-bold text-foreground mb-4">Your Schedule</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-6">Today's Tasks</h3>
             {!hasSchedules ? (
-              <div className="bg-white rounded-lg border border-border p-12 text-center shadow-sm">
-                <p className="text-lg text-neutral mb-2">No schedule yet.</p>
-                <p className="text-sm text-neutral">Start planning your day above!</p>
+              <div className="glass rounded-xl p-12 text-center" style={{ borderColor: 'var(--color-border)' }}>
+                <p className="text-lg font-semibold text-foreground mb-2">No tasks scheduled yet</p>
+                <p className="text-sm" style={{ color: 'var(--color-foreground-secondary)' }}>Create your first task above to get started!</p>
               </div>
             ) : (
               <div className="space-y-4">

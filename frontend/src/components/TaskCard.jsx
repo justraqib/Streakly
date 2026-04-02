@@ -25,18 +25,21 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-border p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div 
+      className="glass rounded-xl p-6 transition-all duration-300 hover:border-opacity-20 group"
+      style={{ borderColor: 'var(--color-border)' }}
+    >
       {/* Time and Task Name */}
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-sm font-semibold text-primary">
+        <div className="flex-1">
+          <p className="text-sm font-semibold" style={{ color: 'var(--color-primary)' }}>
             {task.startTime} - {task.endTime}
           </p>
-          <p className="text-lg font-medium text-foreground mt-1">{task.taskName}</p>
+          <p className="text-lg font-bold text-foreground mt-2">{task.taskName}</p>
         </div>
         <button
           onClick={() => onDelete(task.id)}
-          className="text-neutral hover:text-warning transition-colors text-lg"
+          className="text-foreground-secondary hover:text-primary transition-colors text-2xl ml-2 opacity-0 group-hover:opacity-100"
         >
           ×
         </button>
@@ -44,16 +47,22 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
 
       {/* Status Display */}
       {task.status === 'completed' && (
-        <div className="bg-primary-light rounded-lg p-3 mb-4 flex items-center gap-2">
-          <span className="text-success text-xl">✓</span>
-          <p className="text-sm font-medium text-foreground">Completed</p>
+        <div className="rounded-lg p-4 mb-4 flex items-center gap-3" style={{
+          background: `linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%)`,
+          borderLeft: `4px solid var(--color-success-light)`
+        }}>
+          <span className="text-success-light text-2xl">✓</span>
+          <p className="text-sm font-semibold text-success-light">Completed</p>
         </div>
       )}
 
       {task.status === 'missed' && (
-        <div className="bg-red-50 rounded-lg p-3 mb-4">
-          <p className="text-sm font-medium text-red-700 mb-1">What you did instead:</p>
-          <p className="text-sm text-red-600">{task.note || 'No note added'}</p>
+        <div className="rounded-lg p-4 mb-4" style={{
+          background: `linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%)`,
+          borderLeft: `4px solid #ef4444`
+        }}>
+          <p className="text-sm font-semibold mb-2" style={{ color: '#fca5a5' }}>What you did instead:</p>
+          <p className="text-sm" style={{ color: '#fed2d2' }}>{task.note || 'No note added'}</p>
         </div>
       )}
 
@@ -63,13 +72,21 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
             <div className="flex gap-3">
               <button
                 onClick={handleComplete}
-                className="flex-1 bg-success hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105"
+                style={{
+                  background: `linear-gradient(135deg, var(--color-success) 0%, var(--color-success-light) 100%)`,
+                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+                }}
               >
                 <span>✓</span> Completed
               </button>
               <button
                 onClick={handleMissed}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105"
+                style={{
+                  background: `linear-gradient(135deg, #ef4444 0%, #dc2626 100%)`,
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                }}
               >
                 <span>✕</span> Missed
               </button>
@@ -83,12 +100,22 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
                 value={missedNote}
                 onChange={(e) => setMissedNote(e.target.value)}
                 placeholder="What did you do instead?"
-                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-sm"
+                className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 text-sm text-foreground"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderColor: 'var(--color-border)',
+                  borderWidth: '1px',
+                  focusRingColor: 'var(--color-primary)'
+                }}
               />
               <div className="flex gap-2">
                 <button
                   onClick={handleSaveMissed}
-                  className="flex-1 bg-primary hover:bg-primary-dark text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
+                  className="flex-1 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-sm hover:scale-105"
+                  style={{
+                    background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%)`,
+                    boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)'
+                  }}
                 >
                   Save
                 </button>
@@ -97,7 +124,12 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
                     setShowInput(false)
                     setMissedNote('')
                   }}
-                  className="flex-1 bg-neutral hover:bg-neutral border border-border text-foreground font-medium py-2 px-3 rounded-lg transition-colors text-sm"
+                  className="flex-1 font-semibold py-2 px-3 rounded-lg transition-colors text-sm text-foreground-secondary hover:text-foreground"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderColor: 'var(--color-border)',
+                    borderWidth: '1px'
+                  }}
                 >
                   Cancel
                 </button>
@@ -110,7 +142,12 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
       {task.status && (
         <button
           onClick={handleReset}
-          className="w-full text-neutral hover:text-foreground font-medium py-2 px-3 rounded-lg transition-colors text-sm border border-border"
+          className="w-full font-semibold py-2 px-3 rounded-lg transition-colors text-sm text-foreground-secondary hover:text-foreground"
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderColor: 'var(--color-border)',
+            borderWidth: '1px'
+          }}
         >
           Reset Status
         </button>

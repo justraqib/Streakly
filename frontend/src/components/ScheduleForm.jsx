@@ -28,70 +28,95 @@ export default function ScheduleForm({ onAddSchedule }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-border p-6 shadow-sm">
-      <h2 className="text-xl font-bold text-foreground mb-6">Create Your Day Schedule</h2>
+    <form onSubmit={handleSubmit} className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+      <h2 className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2">
+        <span>➕</span> Add to Your Schedule
+      </h2>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Task Name Input */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Task / Schedule Name
+          <label className="block text-sm font-semibold text-foreground mb-3">
+            What&apos;s your task?
           </label>
           <input
             type="text"
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
             placeholder="e.g., Morning Exercise"
-            className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+            className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 text-foreground"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderColor: 'var(--color-border)',
+              borderWidth: '1px'
+            }}
           />
         </div>
 
         {/* Time Range */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-3">
               Start Time
             </label>
             <input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 text-foreground"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderColor: 'var(--color-border)',
+                borderWidth: '1px'
+              }}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-3">
               End Time
             </label>
             <input
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 text-foreground"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderColor: 'var(--color-border)',
+                borderWidth: '1px'
+              }}
             />
           </div>
         </div>
 
         {/* Repeat Toggle */}
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-3 p-4 rounded-lg" style={{
+          background: 'rgba(255, 255, 255, 0.03)',
+          borderColor: 'var(--color-border)',
+          borderWidth: '1px'
+        }}>
           <input
             type="checkbox"
             id="repeat"
             checked={repeatDaily}
             onChange={(e) => setRepeatDaily(e.target.checked)}
-            className="w-4 h-4 rounded cursor-pointer accent-primary"
+            className="w-5 h-5 rounded cursor-pointer accent-primary"
           />
-          <label htmlFor="repeat" className="text-sm text-foreground cursor-pointer">
-            Repeat daily
+          <label htmlFor="repeat" className="text-sm font-medium text-foreground cursor-pointer">
+            Repeat this task daily
           </label>
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 px-4 rounded-lg transition-colors mt-6"
+          className="w-full text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105 mt-8 text-lg"
+          style={{
+            background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-purple) 100%)`,
+            boxShadow: '0 4px 20px rgba(255, 107, 53, 0.4)'
+          }}
         >
-          Add to Schedule
+          ✓ Add to Schedule
         </button>
       </div>
     </form>

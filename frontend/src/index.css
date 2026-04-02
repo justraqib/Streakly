@@ -3,19 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --color-background: #fafbfc;
-  --color-foreground: #0f172a;
-  --color-primary: #6366f1;
-  --color-primary-light: #eef2ff;
-  --color-primary-dark: #4f46e5;
-  --color-secondary: #8b5cf6;
-  --color-accent: #ec4899;
-  --color-neutral: #e2e8f0;
-  --color-neutral-light: #f1f5f9;
-  --color-border: #e2e8f0;
+  --color-background: #0a0e27;
+  --color-background-secondary: #141829;
+  --color-foreground: #ffffff;
+  --color-foreground-secondary: #b0b8d4;
+  --color-primary: #ff6b35;
+  --color-primary-light: #ff8c5a;
+  --color-primary-dark: #e55a2b;
+  --color-secondary: #f722f7;
+  --color-accent: #00d4ff;
+  --color-accent-purple: #7c3aed;
   --color-success: #10b981;
+  --color-success-light: #34d399;
   --color-warning: #f59e0b;
-  --radius: 12px;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-light: rgba(255, 255, 255, 0.15);
+  --radius: 16px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,12 +32,22 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-background);
+  background: linear-gradient(135deg, var(--color-background) 0%, #1a1f3a 100%);
+  background-attachment: fixed;
   color: var(--color-foreground);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 html, body, #root {
   height: 100%;
   width: 100%;
+}
+
+/* Glassmorphism effect */
+@supports (backdrop-filter: blur(10px)) {
+  .glass {
+    background: rgba(20, 24, 41, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }

@@ -43,15 +43,24 @@ export default function StreakTracker({ schedules, currentDate }) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-primary-light to-primary rounded-lg p-6 shadow-sm border border-primary">
-      <div className="text-center">
-        <p className="text-sm font-medium text-primary mb-2">Current Streak</p>
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <span className="text-4xl">🔥</span>
-          <p className="text-4xl font-bold text-primary">{streak}</p>
+    <div 
+      className="rounded-xl p-8 text-center overflow-hidden relative group"
+      style={{
+        background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)`,
+        boxShadow: '0 10px 40px rgba(255, 107, 53, 0.3)'
+      }}
+    >
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300" 
+        style={{ background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}>
+      </div>
+      <div className="relative z-10">
+        <p className="text-sm font-semibold text-white opacity-90 mb-3 tracking-wide">CURRENT STREAK</p>
+        <div className="flex items-center justify-center gap-4 mb-3">
+          <span className="text-5xl animate-bounce">🔥</span>
+          <p className="text-5xl font-black text-white">{streak}</p>
         </div>
-        <p className="text-sm text-primary">
-          {streak === 0 ? 'Start your streak today!' : `${streak} day${streak !== 1 ? 's' : ''} of consistency`}
+        <p className="text-sm font-semibold text-white opacity-90">
+          {streak === 0 ? '🎯 Start your streak today!' : `✨ ${streak} day${streak !== 1 ? 's' : ''} of pure consistency`}
         </p>
       </div>
     </div>
