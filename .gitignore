@@ -1,5 +1,6 @@
 # Node modules
 node_modules/
+**/node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -23,7 +24,12 @@ Thumbs.db
 dist/
 build/
 out/
+**/dist/
 *.tgz
+
+# Python virtual environments
+.venv/
+**/.venv/
 
 # Dependencies lock files (optional, for monorepos)
 # pnpm-lock.yaml

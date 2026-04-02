@@ -1,32 +1,24 @@
 # Streakly
 
-A project for tracking and managing streaks.
+Project structure is now split into separate frontend and backend folders.
 
-## Getting Started
+## Structure
 
-To get started with this project, clone the repository and follow the setup instructions.
+- `frontend/`: React + Vite app with PWA setup (`vite-plugin-pwa`)
+- `backend/`: backend service folder (placeholder for now)
 
-### Prerequisites
-
-- Git
-- Node.js (or your preferred runtime)
-
-### Installation
+## Frontend Setup
 
 ```bash
-git clone <repository-url>
-cd Streakly
-npm install  # or your package manager
+cd frontend
+npm install
+npm run dev
 ```
 
-### Usage
+## Frontend Build
 
-[Add usage instructions here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## License
-
-[Add license information here]
+```bash
+cd frontend
+npm run build
+npm run preview
+```
