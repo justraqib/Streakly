@@ -17,12 +17,14 @@ export default function MonthlyView({ schedules, currentDate }) {
       
       const daySchedules = schedules.filter(s => (s.createdDate || dateStr) === dateStr)
       const completed = daySchedules.filter(s => s.status === 'completed').length
+      const missed = daySchedules.filter(s => s.status === 'missed')
       const total = daySchedules.length
 
       days.push({
         date: dateStr,
         day: i,
         completed,
+        missed,
         total,
         percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
         isToday: dateStr === new Date().toISOString().split('T')[0],
@@ -149,6 +151,44 @@ export default function MonthlyView({ schedules, currentDate }) {
             <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Low ({`<25%`})</p>
           </div>
         </div>
+      </div>
+
+      {/* Time Allocation Summary */}
+      <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+        <h3 className="text-xl font-bold text-foreground mb-6">Where You Spent Your Time</h3>
+        {monthData.days.some(d => d.missed.length > 0) ? (
+          <div className="space-y-4">
+            {monthData.days
+              .filter(d => d.missed.length > 0)
+              .map((day, idx) => (
+                <div key={idx} className="border-b" style={{ borderColor: 'var(--color-border)' }}>
+                  <p className="font-semibold text-foreground mb-3">
+                    {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                  </p>
+                  <div className="space-y-2 mb-4">
+                    {day.missed.map((task, taskIdx) => (
+                      <div
+                        key={taskIdx}
+                        className="rounded-lg p-3 transition-all"
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.1)',
+                          borderLeft: '3px solid #ef4444'
+                        }}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-foreground text-sm">{task.taskName}</p>
+                          <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">{task.startTime} - {task.endTime}</p>
+                        </div>
+                        <p style={{ color: '#fca5a5' }} className="text-xs">Did instead: {task.note || 'No details'}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-center py-8">Great job! No missed tasks this month</p>
+        )}
       </div>
     </div>
   )

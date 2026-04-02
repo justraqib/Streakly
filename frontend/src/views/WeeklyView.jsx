@@ -13,6 +13,7 @@ export default function WeeklyView({ schedules, currentDate }) {
       
       const daySchedules = schedules.filter(s => (s.createdDate || dateStr) === dateStr)
       const completed = daySchedules.filter(s => s.status === 'completed').length
+      const missed = daySchedules.filter(s => s.status === 'missed')
       const total = daySchedules.length
 
       weekDays.push({
@@ -20,6 +21,7 @@ export default function WeeklyView({ schedules, currentDate }) {
         dateObj: date,
         dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
         completed,
+        missed,
         total,
         percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
       })
@@ -93,6 +95,41 @@ export default function WeeklyView({ schedules, currentDate }) {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Missed Tasks Summary */}
+      <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+        <h3 className="text-xl font-bold text-foreground mb-6">Where You Spent Your Time</h3>
+        <div className="space-y-6">
+          {weekData.map((day, idx) => (
+            day.missed.length > 0 && (
+              <div key={`missed-${idx}`}>
+                <p className="font-semibold text-foreground mb-3">{day.dayName} - {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                <div className="space-y-2">
+                  {day.missed.map((task, taskIdx) => (
+                    <div
+                      key={taskIdx}
+                      className="rounded-lg p-4 transition-all hover:scale-102"
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        borderLeft: '4px solid #ef4444'
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-1">
+                        <p className="font-medium text-foreground">{task.taskName}</p>
+                        <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">{task.startTime} - {task.endTime}</p>
+                      </div>
+                      <p style={{ color: '#fca5a5' }} className="text-sm">Instead: {task.note || 'No details'}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          ))}
+          {weekData.every(d => d.missed.length === 0) && (
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-center py-8">No missed tasks this week</p>
+          )}
         </div>
       </div>
     </div>
