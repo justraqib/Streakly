@@ -35,33 +35,61 @@ export default function MonthlyView({ schedules, currentDate }) {
     }
   }, [schedules])
 
-  const getStatusColor = (day) => {
-    if (day.total === 0) return 'bg-neutral-light border-neutral'
-    if (day.percentage === 100) return 'bg-green-100 border-success'
-    if (day.percentage >= 50) return 'bg-blue-100 border-primary'
-    return 'bg-red-100 border-red-300'
+  const getHeatmapColor = (day) => {
+    if (day.total === 0) return 'rgba(255, 255, 255, 0.05)'
+    if (day.percentage === 100) return 'rgba(16, 185, 129, 0.3)'
+    if (day.percentage >= 75) return 'rgba(16, 185, 129, 0.2)'
+    if (day.percentage >= 50) return 'rgba(255, 107, 53, 0.2)'
+    if (day.percentage >= 25) return 'rgba(255, 107, 53, 0.15)'
+    return 'rgba(239, 68, 68, 0.2)'
   }
 
-  const getStatusText = (day) => {
-    if (day.total === 0) return '—'
-    if (day.percentage === 100) return '✓'
-    return `${day.completed}/${day.total}`
+  const getHeatmapBorder = (day) => {
+    if (day.total === 0) return 'rgba(255, 255, 255, 0.1)'
+    if (day.percentage === 100) return 'var(--color-success-light)'
+    if (day.percentage >= 50) return 'var(--color-primary)'
+    return '#ef4444'
   }
+
+  const totalTasks = monthData.days.reduce((sum, d) => sum + d.total, 0)
+  const totalCompleted = monthData.days.reduce((sum, d) => sum + d.completed, 0)
+  const perfectDays = monthData.days.filter(d => d.total > 0 && d.percentage === 100).length
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Monthly Overview</h2>
-        <p className="text-neutral">{monthData.monthName}</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Monthly Overview</h2>
+        <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-sm font-medium">{monthData.monthName}</p>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="bg-white rounded-lg border border-border p-6 shadow-sm">
+      {/* Monthly Stats Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="glass rounded-xl p-6" style={{ borderColor: 'var(--color-border)' }}>
+          <p style={{ color: 'var(--color-accent)' }} className="text-sm font-semibold mb-2">Total Tasks</p>
+          <p className="text-3xl font-black text-foreground">{totalTasks}</p>
+          <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs mt-2">this month</p>
+        </div>
+        <div className="glass rounded-xl p-6" style={{ borderColor: 'var(--color-border)' }}>
+          <p className="text-sm font-semibold mb-2 text-success-light">Completed</p>
+          <p className="text-3xl font-black text-success-light">{totalCompleted}</p>
+          <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs mt-2">{totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 0}% overall</p>
+        </div>
+        <div className="glass rounded-xl p-6" style={{ borderColor: 'var(--color-border)' }}>
+          <p style={{ color: 'var(--color-primary)' }} className="text-sm font-semibold mb-2">Perfect Days</p>
+          <p style={{ color: 'var(--color-primary)' }} className="text-3xl font-black">{perfectDays}</p>
+          <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs mt-2">100% completed</p>
+        </div>
+      </div>
+
+      {/* Heatmap Calendar */}
+      <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+        <h3 className="text-xl font-bold text-foreground mb-6">Completion Heatmap</h3>
+        
         {/* Day Headers */}
         <div className="grid grid-cols-7 gap-2 mb-4">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
             <div key={day} className="text-center">
-              <p className="text-xs font-semibold text-neutral">{day}</p>
+              <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs font-bold">{day}</p>
             </div>
           ))}
         </div>
@@ -73,68 +101,52 @@ export default function MonthlyView({ schedules, currentDate }) {
             <div key={`empty-${i}`} />
           ))}
 
-          {/* Calendar Days */}
+          {/* Calendar Days - Heatmap Style */}
           {monthData.days.map((day, idx) => (
             <div
               key={idx}
-              className={`aspect-square border rounded-lg p-2 flex flex-col items-center justify-center transition-all ${getStatusColor(day)} ${day.isToday ? 'ring-2 ring-primary' : ''}`}
+              className="aspect-square rounded-lg p-2 flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer group"
+              style={{
+                background: getHeatmapColor(day),
+                border: `2px solid ${getHeatmapBorder(day)}`,
+                borderOpacity: day.total === 0 ? 0.3 : 1
+              }}
+              title={`${day.day}: ${day.total === 0 ? 'No tasks' : `${day.completed}/${day.total} completed (${day.percentage}%)`}`}
             >
-              <p className="text-xs font-semibold text-foreground mb-1">{day.day}</p>
-              <p className={`text-sm font-bold ${day.percentage === 100 ? 'text-success' : 'text-foreground'}`}>
-                {getStatusText(day)}
+              <p className="text-xs font-bold text-foreground">{day.day}</p>
+              <p className="text-xs font-semibold" style={{
+                color: day.percentage === 100 ? 'var(--color-success-light)' : day.percentage >= 50 ? 'var(--color-primary)' : '#fca5a5'
+              }}>
+                {day.total === 0 ? '—' : day.percentage === 100 ? '✓' : `${day.completed}/${day.total}`}
               </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Legend and Stats */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Legend */}
-        <div className="bg-white rounded-lg border border-border p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-foreground mb-4">Legend</h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-green-100 border border-success rounded"></div>
-              <p className="text-sm text-foreground">100% Completed</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-blue-100 border border-primary rounded"></div>
-              <p className="text-sm text-foreground">Partially Completed (50%+)</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-red-100 border border-red-300 rounded"></div>
-              <p className="text-sm text-foreground">Low Completion ({`<50%`})</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-neutral-light border border-neutral rounded"></div>
-              <p className="text-sm text-foreground">No Tasks</p>
-            </div>
+      {/* Legend */}
+      <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+        <h3 className="text-lg font-bold text-foreground mb-6">Heatmap Legend</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded" style={{ background: 'rgba(16, 185, 129, 0.3)', border: '2px solid var(--color-success-light)' }}></div>
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Perfect (100%)</p>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="bg-white rounded-lg border border-border p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-foreground mb-4">Monthly Stats</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-neutral">Total Tasks</p>
-              <p className="text-2xl font-bold text-primary">
-                {monthData.days.reduce((sum, d) => sum + d.total, 0)}
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-neutral">Completed Tasks</p>
-              <p className="text-2xl font-bold text-success">
-                {monthData.days.reduce((sum, d) => sum + d.completed, 0)}
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-neutral">Perfect Days</p>
-              <p className="text-2xl font-bold text-primary">
-                {monthData.days.filter(d => d.total > 0 && d.percentage === 100).length}
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded" style={{ background: 'rgba(16, 185, 129, 0.2)', border: '2px solid var(--color-success-light)' }}></div>
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Great (75-99%)</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded" style={{ background: 'rgba(255, 107, 53, 0.2)', border: '2px solid var(--color-primary)' }}></div>
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Good (50-74%)</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded" style={{ background: 'rgba(255, 107, 53, 0.15)', border: '2px solid var(--color-primary)' }}></div>
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Fair (25-49%)</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded" style={{ background: 'rgba(239, 68, 68, 0.2)', border: '2px solid #ef4444' }}></div>
+            <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-xs">Low ({`<25%`})</p>
           </div>
         </div>
       </div>
