@@ -28,6 +28,9 @@ function App() {
       ...schedule,
       id: Date.now(),
       createdDate: new Date().toISOString().split('T')[0],
+      scheduledTag: schedule.scheduledTag || 'study',
+      actualTag: null,
+      status: null,
     }
     setSchedules([...schedules, newSchedule])
   }

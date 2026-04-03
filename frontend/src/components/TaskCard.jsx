@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { TIME_TAGS } from '../utils/timeCalculator'
 
 export default function TaskCard({ task, onUpdate, onDelete }) {
   const [showInput, setShowInput] = useState(false)
   const [missedNote, setMissedNote] = useState('')
+  const [selectedTag, setSelectedTag] = useState('sleep')
 
   const handleComplete = () => {
     onUpdate(task.id, { completed: true, status: 'completed', note: null })
@@ -13,9 +15,10 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
   }
 
   const handleSaveMissed = () => {
-    onUpdate(task.id, { completed: false, status: 'missed', note: missedNote })
+    onUpdate(task.id, { completed: false, status: 'missed', note: missedNote, actualTag: selectedTag })
     setShowInput(false)
     setMissedNote('')
+    setSelectedTag('sleep')
   }
 
   const handleReset = () => {
@@ -94,12 +97,35 @@ export default function TaskCard({ task, onUpdate, onDelete }) {
           )}
 
           {showInput && (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-2">What did you do instead?</label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {TIME_TAGS.map(tag => (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      onClick={() => setSelectedTag(tag.id)}
+                      className={`px-3 py-1 rounded text-xs font-semibold transition-all ${
+                        selectedTag === tag.id ? 'ring-2 scale-105' : ''
+                      }`}
+                      style={{
+                        background: selectedTag === tag.id ? tag.borderColor : tag.color,
+                        borderColor: tag.borderColor,
+                        borderWidth: '1px',
+                        color: selectedTag === tag.id ? 'white' : 'var(--color-foreground)',
+                      }}
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <input
                 type="text"
                 value={missedNote}
                 onChange={(e) => setMissedNote(e.target.value)}
-                placeholder="What did you do instead?"
+                placeholder="Add details..."
                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 text-sm text-foreground"
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',

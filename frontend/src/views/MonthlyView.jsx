@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import TimeAllocationCard from '../components/TimeAllocationCard'
+import { aggregateHoursByTag, TIME_TAGS } from '../utils/timeCalculator'
 
 export default function MonthlyView({ schedules, currentDate }) {
   const monthData = useMemo(() => {
@@ -19,6 +21,7 @@ export default function MonthlyView({ schedules, currentDate }) {
       const completed = daySchedules.filter(s => s.status === 'completed').length
       const missed = daySchedules.filter(s => s.status === 'missed')
       const total = daySchedules.length
+      const hoursByTag = aggregateHoursByTag(daySchedules, dateStr)
 
       days.push({
         date: dateStr,
@@ -28,6 +31,7 @@ export default function MonthlyView({ schedules, currentDate }) {
         total,
         percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
         isToday: dateStr === new Date().toISOString().split('T')[0],
+        hoursByTag,
       })
     }
 
@@ -152,6 +156,17 @@ export default function MonthlyView({ schedules, currentDate }) {
           </div>
         </div>
       </div>
+
+      {/* Monthly Hours Breakdown */}
+      <TimeAllocationCard 
+        hoursByTag={Object.fromEntries(
+          TIME_TAGS.map(tag => [
+            tag.id,
+            monthData.days.reduce((sum, day) => sum + (day.hoursByTag[tag.id] || 0), 0)
+          ])
+        )}
+        title="Monthly Time Allocation"
+      />
 
       {/* Time Allocation Summary */}
       <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>

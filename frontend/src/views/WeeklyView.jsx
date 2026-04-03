@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import TimeAllocationCard from '../components/TimeAllocationCard'
+import { aggregateHoursByTag, TIME_TAGS } from '../utils/timeCalculator'
 
 export default function WeeklyView({ schedules, currentDate }) {
   const weekData = useMemo(() => {
@@ -15,6 +17,7 @@ export default function WeeklyView({ schedules, currentDate }) {
       const completed = daySchedules.filter(s => s.status === 'completed').length
       const missed = daySchedules.filter(s => s.status === 'missed')
       const total = daySchedules.length
+      const hoursByTag = aggregateHoursByTag(daySchedules, dateStr)
 
       weekDays.push({
         date: dateStr,
@@ -24,6 +27,7 @@ export default function WeeklyView({ schedules, currentDate }) {
         missed,
         total,
         percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
+        hoursByTag,
       })
     }
 
@@ -95,6 +99,49 @@ export default function WeeklyView({ schedules, currentDate }) {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Weekly Hours Breakdown */}
+      <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
+        <h3 className="text-xl font-bold text-foreground mb-6">Hours by Category (Weekly)</h3>
+        <div className="space-y-6">
+          {TIME_TAGS.map(tag => {
+            const totalHours = weekData.reduce((sum, day) => sum + (day.hoursByTag[tag.id] || 0), 0)
+            if (totalHours === 0) return null
+            return (
+              <div key={tag.id}>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-semibold text-foreground">{tag.label}</p>
+                  <p className="font-bold text-foreground">{totalHours.toFixed(1)}h</p>
+                </div>
+                <div className="flex gap-1">
+                  {weekData.map((day, idx) => {
+                    const dayHours = day.hoursByTag[tag.id] || 0
+                    return (
+                      <div
+                        key={idx}
+                        className="flex-1 h-8 rounded-md transition-all hover:scale-110 cursor-pointer"
+                        style={{
+                          background: dayHours > 0 ? tag.borderColor : 'rgba(255, 255, 255, 0.05)',
+                          opacity: dayHours > 0 ? 0.8 : 0.3,
+                          border: `1px solid ${tag.borderColor}`,
+                          position: 'relative'
+                        }}
+                        title={`${day.dayName}: ${dayHours.toFixed(1)}h`}
+                      >
+                        {dayHours > 0 && (
+                          <span className="text-xs font-bold text-white absolute inset-0 flex items-center justify-center">
+                            {dayHours > 1 ? dayHours.toFixed(1) : ''}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 

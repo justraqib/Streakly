@@ -3,18 +3,29 @@ import ScheduleForm from '../components/ScheduleForm'
 import TaskCard from '../components/TaskCard'
 import ProgressSummary from '../components/ProgressSummary'
 import StreakTracker from '../components/StreakTracker'
+import TimeAllocationCard from '../components/TimeAllocationCard'
+import { aggregateHoursByTag } from '../utils/timeCalculator'
 
 export default function DailyView({ schedules, currentDate, onAddSchedule, onUpdateSchedule, onDeleteSchedule }) {
-  // Get today's tasks
-  const todayTasks = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0]
-    return schedules.filter(s => {
-      const scheduleDate = s.createdDate || today
-      return scheduleDate === today
-    }).sort((a, b) => a.startTime.localeCompare(b.startTime))
-  }, [schedules])
+  const today = new Date().toISOString().split('T')[0]
+  
+  const { todayTasks, completedTasks, inboxTasks, hoursByTag } = useMemo(() => {
+    const tasks = schedules.filter(s => (s.createdDate || today) === today)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+    const completed = tasks.filter(t => t.status === 'completed')
+    const pending = tasks.filter(t => !t.status)
+    const hours = aggregateHoursByTag(tasks, today)
+
+    return {
+      todayTasks: tasks,
+      completedTasks: completed,
+      inboxTasks: pending,
+      hoursByTag: hours,
+    }
+  }, [schedules, today])
 
   const hasSchedules = todayTasks.length > 0
+  const hasPending = inboxTasks.length > 0
 
   return (
     <div className="space-y-8">
@@ -32,17 +43,12 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
           {/* Schedule Form */}
           <ScheduleForm onAddSchedule={onAddSchedule} />
 
-          {/* Daily Schedule */}
-          <div>
-            <h3 className="text-2xl font-bold text-foreground mb-6">Today's Tasks</h3>
-            {!hasSchedules ? (
-              <div className="glass rounded-xl p-12 text-center" style={{ borderColor: 'var(--color-border)' }}>
-                <p className="text-lg font-semibold text-foreground mb-2">No tasks scheduled yet</p>
-                <p className="text-sm" style={{ color: 'var(--color-foreground-secondary)' }}>Create your first task above to get started!</p>
-              </div>
-            ) : (
+          {/* Completed Tasks */}
+          {completedTasks.length > 0 && (
+            <div>
+              <h3 className="text-2xl font-bold text-foreground mb-6">✓ Completed Today ({completedTasks.length})</h3>
               <div className="space-y-4">
-                {todayTasks.map(task => (
+                {completedTasks.map(task => (
                   <TaskCard
                     key={task.id}
                     task={task}
@@ -51,14 +57,44 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
                   />
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Inbox - Pending Tasks */}
+          {hasPending && (
+            <div>
+              <h3 className="text-2xl font-bold text-foreground mb-6">📬 Inbox ({inboxTasks.length})</h3>
+              <p style={{ color: 'var(--color-foreground-secondary)' }} className="text-sm mb-4">Mark what you actually did or complete these tasks</p>
+              <div className="space-y-4">
+                {inboxTasks.map(task => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onUpdate={onUpdateSchedule}
+                    onDelete={onDeleteSchedule}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!hasSchedules && (
+            <div className="glass rounded-xl p-12 text-center" style={{ borderColor: 'var(--color-border)' }}>
+              <p className="text-lg font-semibold text-foreground mb-2">No tasks scheduled yet</p>
+              <p className="text-sm" style={{ color: 'var(--color-foreground-secondary)' }}>Create your first task above to get started!</p>
+            </div>
+          )}
         </div>
 
         {/* Sidebar - Right Side */}
         <div className="space-y-6">
           {/* Streak Tracker */}
           <StreakTracker schedules={schedules} currentDate={currentDate} />
+
+          {/* Time Allocation */}
+          {hasSchedules && (
+            <TimeAllocationCard hoursByTag={hoursByTag} title="Today's Hours" />
+          )}
 
           {/* Progress Summary */}
           {hasSchedules && (

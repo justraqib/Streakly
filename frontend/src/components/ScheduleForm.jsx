@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { TIME_TAGS } from '../utils/timeCalculator'
 
 export default function ScheduleForm({ onAddSchedule }) {
   const [taskName, setTaskName] = useState('')
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('10:00')
   const [repeatDaily, setRepeatDaily] = useState(false)
+  const [scheduledTag, setScheduledTag] = useState('study')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -16,6 +18,7 @@ export default function ScheduleForm({ onAddSchedule }) {
       startTime,
       endTime,
       repeatDaily,
+      scheduledTag,
       completed: false,
       status: null,
     })
@@ -25,6 +28,7 @@ export default function ScheduleForm({ onAddSchedule }) {
     setStartTime('09:00')
     setEndTime('10:00')
     setRepeatDaily(false)
+    setScheduledTag('study')
   }
 
   return (
@@ -86,6 +90,33 @@ export default function ScheduleForm({ onAddSchedule }) {
                 borderWidth: '1px'
               }}
             />
+          </div>
+        </div>
+
+        {/* Category Tag Selection */}
+        <div>
+          <label className="block text-sm font-semibold text-foreground mb-3">
+            Category
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {TIME_TAGS.map(tag => (
+              <button
+                key={tag.id}
+                type="button"
+                onClick={() => setScheduledTag(tag.id)}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                  scheduledTag === tag.id ? 'ring-2 scale-105' : 'hover:scale-105'
+                }`}
+                style={{
+                  background: scheduledTag === tag.id ? tag.borderColor : tag.color,
+                  borderColor: tag.borderColor,
+                  borderWidth: '2px',
+                  color: scheduledTag === tag.id ? 'white' : 'var(--color-foreground)',
+                }}
+              >
+                {tag.label}
+              </button>
+            ))}
           </div>
         </div>
 
