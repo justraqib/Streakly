@@ -13,11 +13,14 @@ export default function WeeklyView({ schedules, currentDate }) {
       date.setDate(date.getDate() - i)
       const dateStr = date.toISOString().split('T')[0]
       
-      const daySchedules = schedules.filter(s => (s.createdDate || dateStr) === dateStr)
+      const daySchedules = schedules.filter(s => {
+        const taskDate = s.createdDate || dateStr
+        return taskDate === dateStr
+      })
       const completed = daySchedules.filter(s => s.status === 'completed').length
       const missed = daySchedules.filter(s => s.status === 'missed')
       const total = daySchedules.length
-      const hoursByTag = aggregateHoursByTag(daySchedules, dateStr)
+      const hoursByTag = aggregateHoursByTag(daySchedules)
 
       weekDays.push({
         date: dateStr,

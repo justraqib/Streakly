@@ -1,8 +1,9 @@
 import { TIME_TAGS, getTotalHours } from '../utils/timeCalculator'
 
-export default function TimeAllocationCard({ hoursByTag, title = "Time Allocation" }) {
-  const totalHours = getTotalHours(hoursByTag)
-  const sortedTags = TIME_TAGS.filter(tag => hoursByTag[tag.id] > 0).sort((a, b) => hoursByTag[b.id] - hoursByTag[a.id])
+export default function TimeAllocationCard({ hoursByTag = {}, title = "Time Allocation" }) {
+  const safeHoursByTag = hoursByTag || {}
+  const totalHours = getTotalHours(safeHoursByTag)
+  const sortedTags = TIME_TAGS.filter(tag => (safeHoursByTag[tag.id] || 0) > 0).sort((a, b) => (safeHoursByTag[b.id] || 0) - (safeHoursByTag[a.id] || 0))
 
   return (
     <div className="glass rounded-xl p-8" style={{ borderColor: 'var(--color-border)' }}>
@@ -15,12 +16,13 @@ export default function TimeAllocationCard({ hoursByTag, title = "Time Allocatio
           {/* Visual Bars */}
           <div className="space-y-4 mb-8">
             {sortedTags.map(tag => {
-              const percentage = (hoursByTag[tag.id] / totalHours) * 100
+              const hours = safeHoursByTag[tag.id] || 0
+              const percentage = (hours / totalHours) * 100
               return (
                 <div key={tag.id}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-foreground">{tag.label}</p>
-                    <p className="font-bold text-foreground">{hoursByTag[tag.id].toFixed(1)}h</p>
+                    <p className="font-bold text-foreground">{hours.toFixed(1)}h</p>
                   </div>
                   <div className="w-full h-6 rounded-lg overflow-hidden" style={{
                     background: 'rgba(255, 255, 255, 0.05)',

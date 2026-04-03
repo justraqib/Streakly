@@ -35,7 +35,8 @@ export const aggregateHoursByTag = (schedules, dateStr = null) => {
   })
 
   schedules.forEach(schedule => {
-    if (dateStr && (schedule.createdDate || schedule.date) !== dateStr) return
+    const scheduleDate = schedule.createdDate || schedule.date
+    if (dateStr && scheduleDate !== dateStr) return
 
     const hours = calculateHours(schedule.startTime, schedule.endTime)
     

@@ -10,17 +10,20 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
   const today = new Date().toISOString().split('T')[0]
   
   const { todayTasks, completedTasks, inboxTasks, hoursByTag } = useMemo(() => {
-    const tasks = schedules.filter(s => (s.createdDate || today) === today)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+    const tasks = schedules.filter(s => {
+      const taskDate = s.createdDate || today
+      return taskDate === today
+    }).sort((a, b) => a.startTime.localeCompare(b.startTime))
+    
     const completed = tasks.filter(t => t.status === 'completed')
     const pending = tasks.filter(t => !t.status)
-    const hours = aggregateHoursByTag(tasks, today)
+    const hours = aggregateHoursByTag(tasks)
 
     return {
       todayTasks: tasks,
       completedTasks: completed,
       inboxTasks: pending,
-      hoursByTag: hours,
+      hoursByTag: hours || {},
     }
   }, [schedules, today])
 
