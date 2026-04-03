@@ -18,6 +18,8 @@ export default function DailyView({ schedules, currentDate, onAddSchedule, onUpd
     const completed = tasks.filter(t => t.status === 'completed')
     const pending = tasks.filter(t => !t.status)
     const hours = aggregateHoursByTag(tasks)
+    
+    console.log('[v0] DailyView - schedules:', schedules.length, 'today tasks:', tasks.length, 'completed:', completed.length, 'pending:', pending.length, 'hours:', hours)
 
     return {
       todayTasks: tasks,

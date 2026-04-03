@@ -32,6 +32,7 @@ function App() {
       actualTag: null,
       status: null,
     }
+    console.log('[v0] App addSchedule - newSchedule:', newSchedule)
     setSchedules([...schedules, newSchedule])
   }
 

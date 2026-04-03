@@ -13,7 +13,7 @@ export default function ScheduleForm({ onAddSchedule }) {
     
     if (!taskName.trim()) return
 
-    onAddSchedule({
+    const newSchedule = {
       taskName,
       startTime,
       endTime,
@@ -21,7 +21,9 @@ export default function ScheduleForm({ onAddSchedule }) {
       scheduledTag,
       completed: false,
       status: null,
-    })
+    }
+    console.log('[v0] ScheduleForm submitted:', newSchedule)
+    onAddSchedule(newSchedule)
 
     // Reset form
     setTaskName('')
